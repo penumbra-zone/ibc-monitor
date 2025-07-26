@@ -1,0 +1,142 @@
+# ibc client monitor configuration
+#
+# this file demonstrates all available configuration options.
+# copy to monitor.toml and adjust for your environment.
+
+[global]
+# how often to check client status (in seconds)
+# default: 300 (5 minutes)
+check_interval = 300
+
+# warning threshold (in hours)
+# clients with less time remaining enter warning state
+# default: 48 (2 days)
+warning_threshold = 48
+
+# critical threshold (in hours)  
+# clients with less time remaining enter critical state
+# default: 24 (1 day)
+critical_threshold = 24
+
+# output format for the check command
+# options: "text" or "json"
+# default: "text"
+output_format = "text"
+
+# webhook url for notifications (optional)
+# supports slack-compatible webhook endpoints
+# notifications are sent when client state changes
+# example: "https://hooks.slack.com/services/..."
+webhook_url = ""
+
+# enable prometheus metrics endpoint (optional)
+# set to false to disable metrics collection
+# default: true
+metrics_enabled = true
+
+# address to bind metrics endpoint (optional)
+# only used when metrics_enabled = true
+# default: "0.0.0.0:9090"
+metrics_addr = "0.0.0.0:9090"
+
+# monitors define the ibc clients to track
+# each monitor represents one client on one chain
+
+# basic monitor with explicit client id
+[[monitors]]
+name = "cosmos hub on penumbra"
+description = "monitor cosmos client on penumbra"
+chain_id = "penumbra-1"
+rpc_addr = "https://penumbra-rpc.crouton.digital/"
+grpc_addr = "https://penumbra.crouton.digital/"
+client_id = "07-tendermint-0"
+channel = "channel-0"
+
+# monitor with auto-discovery
+# client_id will be discovered from the channel
+[[monitors]]
+name = "penumbra on cosmos hub"
+description = "monitor penumbra client on cosmos hub"
+chain_id = "cosmoshub-4"
+rpc_addr = "https://cosmos-rpc.polkachu.com/"
+grpc_addr = "http://cosmos-grpc.polkachu.com:14990"
+# client_id is omitted - will be discovered via channel query
+channel = "channel-940"
+
+# using public endpoints
+[[monitors]]
+name = "penumbra on osmosis"
+description = "monitor penumbra client on osmosis"
+chain_id = "osmosis-1"
+rpc_addr = "https://osmosis-rpc.polkachu.com/"
+grpc_addr = "http://osmosis-grpc.polkachu.com:12590"
+client_id = "07-tendermint-3242"
+channel = "channel-79703"
+
+# additional examples for common chains
+
+# penumbra <-> noble
+[[monitors]]
+name = "penumbra on noble"
+chain_id = "noble-1"
+rpc_addr = "https://noble-rpc.polkachu.com/"
+grpc_addr = "http://noble-grpc.polkachu.com:21590"
+channel = "channel-89"
+
+[[monitors]]
+name = "noble on penumbra"
+chain_id = "penumbra-1"
+rpc_addr = "https://penumbra-rpc.crouton.digital/"
+grpc_addr = "https://penumbra.crouton.digital/"
+client_id = "07-tendermint-2"
+channel = "channel-2"
+
+# penumbra <-> dydx
+[[monitors]]
+name = "penumbra on dydx"
+chain_id = "dydx-mainnet-1"
+rpc_addr = "https://dydx-rpc.polkachu.com/"
+grpc_addr = "http://dydx-grpc.polkachu.com:23890"
+channel = "channel-89"
+
+[[monitors]]
+name = "dydx on penumbra"
+chain_id = "penumbra-1"
+rpc_addr = "https://penumbra-rpc.crouton.digital/"
+grpc_addr = "https://penumbra.crouton.digital/"
+channel = "channel-16"
+
+# penumbra <-> stride
+[[monitors]]
+name = "penumbra on stride"
+chain_id = "stride-1"
+rpc_addr = "https://stride-rpc.polkachu.com/"
+grpc_addr = "http://stride-grpc.polkachu.com:12290"
+channel = "channel-307"
+
+[[monitors]]
+name = "stride on penumbra"
+chain_id = "penumbra-1"
+rpc_addr = "https://penumbra-rpc.crouton.digital/"
+grpc_addr = "https://penumbra.crouton.digital/"
+channel = "channel-8"
+
+# notes:
+#
+# - rpc_addr is used for chain metadata only
+# - grpc_addr is required for client queries
+# - client_id can be omitted for auto-discovery
+# - channel is used for display and discovery
+# - both ends of a connection should be monitored
+#
+# environment variables:
+#
+# LOG_FORMAT=json         # structured json logging
+# RUST_LOG=info          # log level (trace, debug, info, warn, error)
+# WEBHOOK_URL=...        # override webhook url from config
+#
+# metrics endpoint:
+#
+# when running in continuous mode with metrics_enabled = true,
+# prometheus metrics are exposed on the configured metrics_addr
+# (default: http://localhost:9090/metrics)
